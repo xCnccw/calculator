@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+<!-- 可选的 Bootstrap 主题文件（一般不用引入） -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+    <title>Document</title>
+    <style>
+        body{
+            /* display: flex;
+            justify-content: center; */
+            align-items: center;
+            min-width: 100vh;
+            background-color: #010101;
+            /* font-size: 100px; */
+            
+        }
+        .text{
+            border: 0;
+            background: #010101;
+            /* box-shadow: 8px 8px 16px #8b8b8b,
+                        -8px -8px 16px #bdbdbd; */
+            border-radius: 10px;
+            font-size:64px;
+            font-family:Helvetica;
+            text-align: right;
+            padding: 0 20px;
+            /* margin-bottom: 10px; */
+            color:#ffffff;
+            line-height: 65px;
+        }
+        .calculator{
+            margin-top: 128px;
+            display: grid;
+            /* width: calc(4 * 80px);
+		   height: calc(6 * 80px); */
+           grid-template-columns: repeat(4,80px);
+           grid-template-rows: repeat(6,80px);
+
+            grid-template-areas:"result result result result"
+                                "AC ± percent ÷"
+                                "number-7 number-8 number-9 multiply"
+                                "number-4 number-5 number-6 subtract"
+                                "number-1 number-2 number-3 divide"
+                                "number-0 number-0 dot equal";
+        }
+        button{
+            margin: 8px;
+            padding: 0;
+            border: 0px;  
+            display: block;         
+            /* background-color: transparent; */
+            outline: none;
+            font-size:24px;
+            font-family:Helvetica;
+        }
+        .grey{
+            color:#000000;
+            border-radius: 50px;
+            background: linear-gradient(145deg, #949494, #afafaf);
+            /* box-shadow:  8px 8px 16px #8b8b8b,
+                         -8px -8px 16px #bdbdbd; */
+        }
+        .grey:active{
+            /* box-shadow:  8px 8px 16px #8b8b8b inset,
+                        -8px -8px 16px #bdbdbd inset; */
+            background: #d9d9d9;
+        }
+        .orange{
+            color:white;
+            border-radius: 50px;
+            background: linear-gradient(145deg, #de8f2c, #ffaa34);
+            /* box-shadow:  8px 8px 16px #d2872a,
+                         -8px -8px 16px #ffb738; */
+                         
+        }
+        .orange:active{
+            /* box-shadow:  8px 8px 16px #d2872a inset,
+                         -8px -8px 16px #ffb738 inset; */
+            color:#f79f31;
+            background: #ffffff;
+            
+        }
+        .dimgrey{
+            color:white;
+            border-radius: 50px;
+            background: linear-gradient(145deg, #2e2e2e, #373737);
+            /* box-shadow:  8px 8px 16px #2b2b2b,
+                         -8px -8px 16px #3b3b3b; */
+        }
+        .dimgrey:active{
+            /* box-shadow:  8px 8px 16px #2b2b2b inset,
+                         -8px -8px 16px #3b3b3b inset; */
+            background: #737373;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="col-md-4">
+        <div class="calculator" id="app">
+        <input type="text" class="text"style="grid-area:result" disabled="disabled" v-model="equation">
+        <button class="grey"style="grid-area:AC" @click="clear">AC</button>
+        <button class="grey"style="grid-area:±" @click="calculateToggle">±</button>
+        <button class="grey"style="grid-area:percent" @click="calculatePercentage">%</button>
+    
+        <button class="orange"style="grid-area:÷" @click="append('÷')">÷</button>
+        <button class="orange"style="grid-area:multiply" @click="append('×')">×</button>
+        <button class="orange"style="grid-area:subtract" @click="append('-')">-</button>
+        <button class="orange"style="grid-area:divide" @click="append('+')">+</button>
+        <button class="orange"style="grid-area:equal" @click="calculate">=</button>
+
+        <button class="dimgrey"style="grid-area:dot" @click="append('.')">.</button>
+        <button class="dimgrey"style="grid-area:number-1" @click="append(1)">1</button>
+        <button class="dimgrey"style="grid-area:number-2" @click="append(2)">2</button>
+        <button class="dimgrey"style="grid-area:number-3" @click="append(3)">3</button>
+        <button class="dimgrey"style="grid-area:number-4" @click="append(4)">4</button>
+        <button class="dimgrey"style="grid-area:number-5" @click="append(5)">5</button>
+        <button class="dimgrey"style="grid-area:number-6" @click="append(6)">6</button>
+        <button class="dimgrey"style="grid-area:number-7" @click="append(7)">7</button>
+        <button class="dimgrey"style="grid-area:number-8" @click="append(8)">8</button>
+        <button class="dimgrey"style="grid-area:number-9" @click="append(9)">9</button>
+        <button class="dimgrey"style="grid-area:number-0" @click="append(0)">0</button>
+    </div>
+    </div>
+    </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script>
+        var app = new Vue({
+          el: '#app',
+          data: {
+              equation:'0',
+              isDecimalAdded:false,
+              isOperatorAdded:false,
+              isStarted:false,
+          },
+          methods:{
+              isOperator(character){
+                return['+','-','×','÷'].indexOf(character)>-1
+              },
+              append(character){
+                  if(this.equation==='0'&&!this.isOperator(character)/*check*/){
+                    if(character==='.'){
+                        this.equation+=''+character /*引号加character为了转化为string*/
+                        this.isDecimalAdded=true
+                    }else{
+                        this.equation=''+character
+                    }
+                    this.isStarted=true
+                    return
+                    }
+                    if(!this.isOperator(character)){
+                        if(character==='.'&&this.isDecimalAdded){
+                            return
+                        }
+                        if(character==="."){
+                            this.isDecimalAdded=true
+                            this.isOperatorAdded=true
+                        }else{
+                            this.isOperatorAdded=false
+                        }
+                        this.equation+=''+character
+                    }
+                    //运算符
+                    if(this.isOperator(character)&&!this.isOperatorAdded){
+                        this.equation+=''+character
+                        this.isDecimalAdded=false
+                        this.isOperatorAdded=true
+                    }
+                  },
+              calculate(){
+                  let result=this.equation.replace(new RegExp('×','g'),'*').replace
+                  (new RegExp('÷','g'),'/')
+                  this.equation=parseFloat(eval(result).toFixed(9).toString())
+                  this.isOperatorAdded=false
+                  this.isDecimalAdded=false
+              },
+              calculateToggle(){
+                if(this.isOperatorAdded||!this.isStarted){
+                    return
+                }
+                this.equation=this.equation+'*-1'
+                this.calculate()
+              },
+              calculatePercentage(){
+                  if(this.isOperatorAdded||!this.isStarted){
+                      return
+                  }
+                  this.equation=this.equation+'*0.01'
+                  this.calculate()
+              },
+              clear(){
+                this.equation='0',
+                this.isDecimalAdded=false,
+                this.isOperatorAdded=false,
+                this.isStarted=false
+              }
+                    }
+
+
+            
+        })
+        </script>
+            <script>
+                //禁用右键菜单
+                document.addEventListener('contextmenu',function(e) {
+                e.preventDefault();            
+                })
+                // 禁止鼠标选中
+                document.addEventListener('selectstart',function(e){
+                    e.preventDefault();
+                })
+                </script>
+
+    
+</body>
+</html>
